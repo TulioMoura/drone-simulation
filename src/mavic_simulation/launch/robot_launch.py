@@ -19,7 +19,7 @@
 import os
 import launch
 from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument
+from launch.actions import DeclareLaunchArgument, OpaqueFunction
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription
 from ament_index_python.packages import get_package_share_directory
@@ -28,6 +28,8 @@ from webots_ros2_driver.webots_controller import WebotsController
 
 
 def generate_launch_description():
+    # Declare the 'num_drones' launch argument
+
     package_dir = get_package_share_directory('mavic_simulation')
     world = LaunchConfiguration('world')
 
@@ -37,15 +39,25 @@ def generate_launch_description():
     )
 
     robot_description_path = os.path.join(package_dir, 'resource', 'mavic_webots.urdf')
-    mavic_driver = WebotsController(
-        robot_name='Mavic_2_PRO',
-        parameters=[
-            {'robot_description': robot_description_path},
-        ],
-        respawn=True
-    )
 
-    return LaunchDescription([
+    num_drones = int(input("\n****************************************"
+    +"\nHow many drones do you want to simulate?"
+    +"\n****************************************\nR:"))
+
+    mavic_drivers = {}
+    for i in range(num_drones):
+        driver_name = f"mavic_driver_{i + 1}"
+        drone_name = f"Mavic_2_PRO_{i+1}"
+
+        mavic_drivers[driver_name] = WebotsController(
+            robot_name=drone_name,
+            parameters=[
+                {'robot_description': robot_description_path},
+            ],
+            respawn=True
+        )
+    breakpoint()
+    ld = LaunchDescription([
         DeclareLaunchArgument(
             'world',
             default_value='mavic_world.wbt',
@@ -53,7 +65,8 @@ def generate_launch_description():
         ),
         webots,
         webots._supervisor,
-        mavic_driver,
+        # mavic_drivers['mavic_driver_1'],
+        # mavic_drivers['mavic_driver_2'],
 
         # This action will kill all nodes once the Webots simulation has exited
         launch.actions.RegisterEventHandler(
@@ -65,3 +78,32 @@ def generate_launch_description():
             )
         )
     ])
+
+    for mavic in mavic_drivers:
+        ld.add_action(mavic_drivers[mavic])
+    # ld.add_action(mavic_drivers['mavic_driver_1'])
+    # ld.add_action(mavic_drivers['mavic_driver_2'])
+
+    return ld
+
+    # return LaunchDescription([
+    #     DeclareLaunchArgument(
+    #         'world',
+    #         default_value='mavic_world.wbt',
+    #         description='Choose one of the world files from `/mavic_simulation/worlds` directory'
+    #     ),
+    #     webots,
+    #     webots._supervisor,
+    #     mavic_drivers['mavic_driver_1'],
+    #     mavic_drivers['mavic_driver_2'],
+
+    #     # This action will kill all nodes once the Webots simulation has exited
+    #     launch.actions.RegisterEventHandler(
+    #         event_handler=launch.event_handlers.OnProcessExit(
+    #             target_action=webots,
+    #             on_exit=[
+    #                 launch.actions.EmitEvent(event=launch.events.Shutdown())
+    #             ],
+    #         )
+    #     )
+    # ])
