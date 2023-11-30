@@ -33,15 +33,16 @@ def generate_launch_description():
     # Método para adicionar a quantidade especificada de drones ao arquivo .wbt do mundo que será simulado
     def generate_wbt_file(num_drones):
         # Abre o modelo base do mundo simulado e lê o conteúdo
-        with open('/drone-simulation_ws/install/mavic_simulation/share/mavic_simulation/worlds/mavic_world.wbt') as template_file:
+        with open('install/mavic_simulation/share/mavic_simulation/worlds/mavic_world.wbt') as template_file:
             template_content = template_file.read()
 
         # Cria drones de acordo com a quantidade desejada
         wbt_content = ''
+        y = 0
         for i in range(num_drones):
             # Modify template content for each drone instance
             drone_content = f"Mavic2Pro {{\n"
-            drone_content += f"  translation 0 0 {i * 0.1 + 0.1}\n"  # Adjust translation based on 'i'
+            drone_content += f"  translation 0 {y} 0.07\n"  # Adjust translation based on 'i'
             drone_content += "  rotation 0 0 1 3.141590777218456\n"
             drone_content += f"  name \"Mavic_2_PRO_{i+1}\"\n"
             drone_content += "  controller \"<extern>\"\n"
@@ -51,21 +52,23 @@ def generate_launch_description():
             drone_content += "      width 400\n"
             drone_content += "      height 240\n"
             drone_content += "      near 0.2\n"
+            drone_content += "      rotation 0 1 0 1.5708\n"
             drone_content += "    }\n"
             drone_content += "  ]\n"
             drone_content += "}\n\n"
 
             wbt_content += drone_content
+            y += 1
         
         # Adiciona modelo base do mundo aos drones criados
         wbt_content = template_content + wbt_content
         
         # Verifica se já existe um arquivo updated_world.wbt (se existir dá erro). Se sim, apaga ele.
-        if os.path.exists('/drone-simulation_ws/install/mavic_simulation/share/mavic_simulation/worlds/updated_world.wbt'):
-            os.remove('/drone-simulation_ws/install/mavic_simulation/share/mavic_simulation/worlds/updated_world.wbt')
+        if os.path.exists('install/mavic_simulation/share/mavic_simulation/worlds/updated_world.wbt'):
+            os.remove('install/mavic_simulation/share/mavic_simulation/worlds/updated_world.wbt')
 
         # Destino do novo arquivo de mundo que será usado pela simulação
-        destination_dir = '/drone-simulation_ws/install/mavic_simulation/share/mavic_simulation/worlds/'
+        destination_dir = 'install/mavic_simulation/share/mavic_simulation/worlds/'
         
         # Save the updated WBT content to a new file
         with open('updated_world.wbt', 'w') as output_file:
