@@ -64,8 +64,10 @@ class MavicDriver:
 
         # ROS interface
         rclpy.init(args=None)
-        self.__node = rclpy.create_node('mavic_driver')
-        self.__node.create_subscription(Twist, 'cmd_vel', self.__cmd_vel_callback, 1)
+        name = self.__robot.name
+        topic_name = f'cmd_vel_{name}'
+        self.__node = rclpy.create_node('driver_'+name)
+        self.__node.create_subscription(Twist, topic_name, self.__cmd_vel_callback, 1)
 
     def __cmd_vel_callback(self, twist):
         self.__target_twist = twist
@@ -121,3 +123,13 @@ class MavicDriver:
         self.__propellers[1].setVelocity(m2)
         self.__propellers[2].setVelocity(m3)
         self.__propellers[3].setVelocity(-m4)
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = MavicDriver()
+    rclpy.spin(node)
+    rclpy.shutdown()
+
+if __name__ == "__main__":
+    main()
+    

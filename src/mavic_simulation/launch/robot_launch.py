@@ -27,6 +27,7 @@ from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
 import shutil
 import os
+from launch_ros.actions import Node
 
 def generate_launch_description():
 
