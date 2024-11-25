@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+
 
 # Copyright 1996-2023 Cyberbotics Ltd.
 #
