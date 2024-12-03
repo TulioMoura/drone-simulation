@@ -113,7 +113,7 @@ class Mavic (Robot):
                 self.target_index += 1
                 self.target_position[0:2] = waypoints[self.target_index]
             if verbose_target:
-                print("Target reached! New target: ",
+                print(self.name," reaches one target! New target: ",
                       self.target_position[0:2])
 
         # This will be in ]-pi;pi]
