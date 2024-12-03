@@ -43,7 +43,7 @@ def generate_wbt_file(drones):
             #print(f"DRONE-ID {index} INIT X {drone['start'][0]} INIT Y {drone['start'][1]}")
             # Modify template content for each drone instance
             drone_content = f"Mavic2Pro {{\n"
-            drone_content += f"  translation {drone['path'][0][0]} {drone['path'][0][1]} 1\n"  # Adjust translation based on 'i'
+            drone_content += f"  translation {drone['path'][0][0]} {drone['path'][0][1]} 0.3\n"  # Adjust translation based on 'i'
             drone_content += "  rotation 0 0 1 3.141590777218456\n"
             drone_content += f"  name \"Mavic_2_PRO_{drone['uuid']}\"\n"
             drone_content += "  controller \"mavic2pro_navigation\" \n"
@@ -64,8 +64,9 @@ def generate_wbt_file(drones):
 
             launch_box = f"CardboardBox {{\n"
             launch_box += f"  name \"cardboardBox_{drone['uuid']}\"\n"
-            launch_box += f"translation {drone['path'][0][0]} {drone['path'][0][1]} 0.3 \n"
-            launch_box += "rotation 0 0 1 1.309 }\n\n"
+            launch_box += f"translation {drone['path'][0][0]} {drone['path'][0][1]} 0 \n"
+            launch_box += "rotation 0 0 1 1.309 \n\n"
+            launch_box += "size 2 2 0.2 }"
 
             wbt_content += launch_box
 

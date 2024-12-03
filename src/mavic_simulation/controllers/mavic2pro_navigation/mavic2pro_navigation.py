@@ -75,6 +75,7 @@ class Mavic (Robot):
         self.target_position = [0, 0, 0]
         self.target_index = 0
         self.target_altitude = 0
+        self.route_concluded = False
 
     def set_position(self, pos):
         """
@@ -104,10 +105,13 @@ class Mavic (Robot):
         # if the robot is at the position with a precision of target_precision
         if all([abs(x1 - x2) < self.target_precision for (x1, x2) in zip(self.target_position, self.current_pose[0:2])]):
 
-            self.target_index += 1
-            if self.target_index > len(waypoints) - 1:
-                self.target_index = 0
-            self.target_position[0:2] = waypoints[self.target_index]
+            
+            if self.target_index == len(waypoints) - 1:
+                self.route_concluded = True
+                self.target_altitude = 0
+            else:
+                self.target_index += 1
+                self.target_position[0:2] = waypoints[self.target_index]
             if verbose_target:
                 print("Target reached! New target: ",
                       self.target_position[0:2])
@@ -162,10 +166,10 @@ class Mavic (Robot):
 
             if altitude > self.target_altitude - 1:
                 # as soon as it reach the target altitude, compute the disturbances to go to the given waypoints.
-                if self.getTime() - t1 > 0.1:
-                    yaw_disturbance, pitch_disturbance = self.move_to_target(
-                        waypoints)
+                if (self.getTime() - t1 > 0.1 and not(self.route_concluded)):
+                    yaw_disturbance, pitch_disturbance = self.move_to_target(waypoints)
                     t1 = self.getTime()
+
 
             roll_input = self.K_ROLL_P * clamp(roll, -1, 1) + roll_acceleration + roll_disturbance
             pitch_input = self.K_PITCH_P * clamp(pitch, -1, 1) + pitch_acceleration + pitch_disturbance
