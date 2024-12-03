@@ -27,6 +27,16 @@ WorldInfo {
   }
 }
 
+
+Viewpoint {
+  orientation 0.08691639817571957 -0.2441931919090457 -0.9658235991905727 5.237414267776498
+  position -19.796334480456697 -31.947723280405064 9.200152767312492
+  near 0.2
+  follow "Mavic 2 PRO"
+  followSmoothness 0.2
+}
+
+
 TexturedBackground {
   luminosity 3
 }
@@ -38,4 +48,3 @@ Floor {
   appearance SandyGround {
   }
 }
-

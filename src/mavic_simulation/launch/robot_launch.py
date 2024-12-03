@@ -63,6 +63,7 @@ def generate_wbt_file(drones):
             wbt_content += drone_content
 
             launch_box = f"CardboardBox {{\n"
+            launch_box += f"  name \"cardboardBox_{drone['uuid']}\"\n"
             launch_box += f"translation {drone['path'][0][0]} {drone['path'][0][1]} 0.3 \n"
             launch_box += "rotation 0 0 1 1.309 }\n\n"
 
