@@ -20,19 +20,21 @@ import os
 import launch
 from launch.substitutions import LaunchConfiguration
 from launch.actions import DeclareLaunchArgument, OpaqueFunction, ExecuteProcess
+from launch.substitutions import LaunchConfiguration
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
-from launch import LaunchDescription
+from launch import LaunchDescription, LaunchContext
 from ament_index_python.packages import get_package_share_directory
 from webots_ros2_driver.webots_launcher import WebotsLauncher
 from webots_ros2_driver.webots_controller import WebotsController
 import shutil
 import os
 import json
+import sys
 from launch_ros.actions import Node
 
 
 def generate_wbt_file(drones):
-        # Abre o modelo base do mundo simulado e lê o conteúdo
+	# Abre o modelo base do mundo simulado e lê o conteúdo
         with open('install/mavic_simulation/share/mavic_simulation/worlds/mavic_world.wbt') as template_file:
             template_content = template_file.read()
 
@@ -106,7 +108,7 @@ def generate_wbt_file(drones):
 def read_path_file(directory):
     #ler o diretorio e retornar um array de objetos    
     print(os.getcwd())
-    with open('install/mavic_simulation/share/mavic_simulation/'+ directory, 'r') as drone_path_file:
+    with open(directory, 'r') as drone_path_file:
         drones = json.load(drone_path_file)
     return drones
 
@@ -124,8 +126,12 @@ def generate_launch_description():
     #cada item do array contém um determinado drone
 
     
-
-    drones = read_path_file('/path/drone_path.json')
+    path_filename = ""
+    for arg in sys.argv:
+        if arg.startswith("file:="):
+            path_filename = arg.split(":=", 1)[1]
+    print(path_filename)
+    drones = read_path_file('path/'+path_filename)
 
     # Obtém a quantidade de drones desejada na simulação
     num_drones = len(drones)
