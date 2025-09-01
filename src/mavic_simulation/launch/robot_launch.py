@@ -42,10 +42,10 @@ def generate_wbt_file(drones):
             #print(drone)
             #print(f"DRONE-ID {index} INIT X {drone['start'][0]} INIT Y {drone['start'][1]}")
             # Modify template content for each drone instance
-            drone_content = f"Mavic2Pro {{\n"
+            drone_content = f"DEF {drone['uuid']} Mavic2Pro {{\n"
             drone_content += f"  translation {drone['path'][0][0]} {drone['path'][0][1]} 0.3\n"  # Adjust translation based on 'i'
             drone_content += "  rotation 0 0 1 3.141590777218456\n"
-            drone_content += f"  name \"Mavic_2_PRO_{drone['uuid']}\"\n"
+            drone_content += f"  name \"{drone['uuid']}\"\n"
             drone_content += "  controller \"mavic2pro_navigation\" \n"
             #drone_content += "  controller <extern> \n"
             drone_content += f"  customData \"{drone['path']}|{drone['altitude']}\"\n"
@@ -70,8 +70,20 @@ def generate_wbt_file(drones):
 
             wbt_content += launch_box
 
+        supervisor_block = "Robot { \n"
+        supervisor_block += "name \"ros_supervisor\"\n"
+        supervisor_block += "supervisor TRUE\n"
+        supervisor_block += "controller \"ros_supervisor\"\n"
+        supervisor_block += "}"
+	    
+        wbt_content += supervisor_block
+        
+        
+        
         # Adiciona modelo base do mundo aos drones criados
         wbt_content = template_content + wbt_content
+        
+        print("Models Written to world file")
         
         # Verifica se já existe um arquivo updated_world.wbt (se existir dá erro). Se sim, apaga ele.
         if os.path.exists('install/mavic_simulation/share/mavic_simulation/worlds/updated_world.wbt'):

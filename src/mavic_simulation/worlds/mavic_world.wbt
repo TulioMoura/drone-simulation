@@ -21,7 +21,8 @@ WorldInfo {
     "Example of multiple DJI Mavic 2 PRO drones covering an area within a given path"
   ]
   title "DJI Mavic 2 PRO covering an area"
-  basicTimeStep 8
+  basicTimeStep 32
+  FPS 32
   defaultDamping Damping {
     linear 0.5
     angular 0.5

@@ -8,12 +8,9 @@ data_files = []
 data_files.append(('share/ament_index/resource_index/packages', ['resource/' + package_name]))
 data_files.append(('share/' + package_name + '/launch', ['launch/robot_launch.py']))
 data_files.append(('share/' + package_name + '/controllers/mavic2pro_navigation' , ['controllers/mavic2pro_navigation/mavic2pro_navigation.py']))
-data_files.append(('share/' + package_name + '/worlds', [
-    'worlds/mavic_world.wbt', 'worlds/.mavic_world.wbproj',
-]))
-data_files.append(('share/' + package_name + '/resource', [
-    'resource/mavic_webots.urdf'
-]))
+data_files.append(('share/' + package_name + '/controllers/ros_supervisor' , ['controllers/ros_supervisor/ros_supervisor.py']))
+data_files.append(('share/' + package_name + '/worlds', ['worlds/mavic_world.wbt', 'worlds/.mavic_world.wbproj']))
+data_files.append(('share/' + package_name + '/resource', ['resource/mavic_webots.urdf']))
 data_files.append(('share/' + package_name, ['package.xml']))
 data_files.append(('share/' + package_name + '/path', ['path/drone_path.json']))
 
