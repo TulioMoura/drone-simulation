@@ -1,7 +1,7 @@
 """webots_ros2 package setup file."""
 
 from setuptools import setup
-
+import os
 
 package_name = 'mavic_simulation'
 data_files = []
@@ -12,7 +12,13 @@ data_files.append(('share/' + package_name + '/controllers/ros_supervisor' , ['c
 data_files.append(('share/' + package_name + '/worlds', ['worlds/mavic_world.wbt', 'worlds/.mavic_world.wbproj']))
 data_files.append(('share/' + package_name + '/resource', ['resource/mavic_webots.urdf']))
 data_files.append(('share/' + package_name, ['package.xml']))
-data_files.append(('share/' + package_name + '/path', ['path/drone_path.json']))
+
+
+for root, _, files in os.walk("path"):
+    for f in files:
+        full_src = os.path.join(root, f)
+        full_dst = os.path.join('share/' , package_name, full_src)
+        data_files.append(('share/'+package_name + '/path',[full_src]))
 
 
 setup(

@@ -2,6 +2,7 @@ from controller import Supervisor
 import rclpy, json, os
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
+import argparse
 
 class SupervisorNode(Node):
     def __init__(self, supervisor, uuids):
@@ -41,9 +42,13 @@ supervisor = Supervisor()
 rclpy.init()
 
 # Lê o mesmo arquivo JSON já usado no projeto
+filename =  os.environ.get("file")
+
+
 print(os.getcwd())
 print(os.listdir('../../path'))
-json_path = os.path.join(os.path.dirname(__file__), '../../path/drone_path.json')
+json_path = os.path.join(os.path.dirname(__file__), '../../path/',filename)
+print(json_path)
 with open(json_path) as f:
     drones = json.load(f)
 uuids = [d['uuid'] for d in drones]

@@ -19,7 +19,7 @@
 import os
 import launch
 from launch.substitutions import LaunchConfiguration
-from launch.actions import DeclareLaunchArgument, OpaqueFunction, ExecuteProcess
+from launch.actions import DeclareLaunchArgument, OpaqueFunction, ExecuteProcess,SetEnvironmentVariable
 from launch.substitutions import LaunchConfiguration
 from launch.substitutions.path_join_substitution import PathJoinSubstitution
 from launch import LaunchDescription, LaunchContext
@@ -108,7 +108,7 @@ def generate_wbt_file(drones):
 def read_path_file(directory):
     #ler o diretorio e retornar um array de objetos    
     print(os.getcwd())
-    with open(directory, 'r') as drone_path_file:
+    with open('install/mavic_simulation/share/mavic_simulation/path/'+directory, 'r') as drone_path_file:
         drones = json.load(drone_path_file)
     return drones
 
@@ -131,7 +131,7 @@ def generate_launch_description():
         if arg.startswith("file:="):
             path_filename = arg.split(":=", 1)[1]
     print(path_filename)
-    drones = read_path_file('path/'+path_filename)
+    drones = read_path_file(path_filename)
 
     # Obtém a quantidade de drones desejada na simulação
     num_drones = len(drones)
@@ -161,8 +161,9 @@ def generate_launch_description():
 
     # Cria o launch
     ld = LaunchDescription([
+        SetEnvironmentVariable(name="file",value = path_filename),
         ExecuteProcess(
-            cmd=['webots', '--batch', os.path.join(package_dir,'worlds', 'updated_world.wbt' )],
+            cmd=['webots', '--batch', os.path.join(package_dir,'worlds', 'updated_world.wbt')],
             output='screen',
         ),
         #webots._supervisor,
