@@ -69,6 +69,13 @@ def generate_wbt_file(drones):
 
             wbt_content += launch_box
 
+        supervisor_block = "Robot { \n"
+        supervisor_block += "name \"ros_supervisor\"\n"
+        supervisor_block += "supervisor TRUE\n"
+        supervisor_block += "controller \"ros_supervisor\"\n"
+        supervisor_block += "}"
+	    
+        wbt_content += supervisor_block
         
         
         
