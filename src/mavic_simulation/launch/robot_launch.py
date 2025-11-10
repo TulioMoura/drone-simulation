@@ -126,7 +126,6 @@ def generate_launch_description():
     ld = LaunchDescription([
         SetEnvironmentVariable(name='file', value=path_filename),
         webots,  # executa Webots
-        webots._supervisor,
     ])
 
     for drone in drones:
