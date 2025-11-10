@@ -2,7 +2,8 @@ from controller import Supervisor
 import rclpy, json, os
 from rclpy.node import Node
 from geometry_msgs.msg import PoseStamped
-import argparse
+from std_msgs.msg import String
+
 
 class SupervisorNode(Node):
     def __init__(self, supervisor, uuids):
@@ -10,52 +11,64 @@ class SupervisorNode(Node):
         self.supervisor = supervisor
         self.timestep = int(supervisor.getBasicTimeStep())
         self.drones = {}
-        root = supervisor.getRoot()
-        children_field = root.getField("children")
-    
-        # Lista todos os nós
-        #for i in range(children_field.getCount()):
-        #    node = children_field.getMFNode(i)
-        #    print(node.getTypeName(), node.getDef())
 
         for uuid in uuids:
-            node = supervisor.getFromDef(f"{uuid}")
+            node = supervisor.getFromDef(uuid)
             if node:
                 self.drones[uuid] = {
+                    'node': node,
                     'field': node.getField('translation'),
-                    'pub': self.create_publisher(PoseStamped, f'/{uuid}/pose', 10)
+                    'pub_pose': self.create_publisher(PoseStamped, f'/{uuid}/pose', 10),
+                    'pub_custom': self.create_publisher(String, f'/{uuid}/custom_data', 10),
                 }
+                self.get_logger().info(f"Drone {uuid} registrado.")
             else:
                 self.get_logger().warn(f"Drone {uuid} não encontrado no mundo.")
 
     def step_and_publish(self):
         for uuid, info in self.drones.items():
+            # posição
             pos = info['field'].getSFVec3f()
-            msg = PoseStamped()
-            msg.pose.position.x = pos[0]
-            msg.pose.position.y = pos[1]
-            msg.pose.position.z = pos[2]
-            info['pub'].publish(msg)
+            pose_msg = PoseStamped()
+            pose_msg.pose.position.x = pos[0]
+            pose_msg.pose.position.y = pos[1]
+            pose_msg.pose.position.z = pos[2]
+            info['pub_pose'].publish(pose_msg)
 
-# --- Supervisor principal ---
-supervisor = Supervisor()
-rclpy.init()
+            # customData
+            custom = info['node'].getCustomData() or ''
+            msg = String()
+            msg.data = custom
+            info['pub_custom'].publish(msg)
 
-# Lê o mesmo arquivo JSON já usado no projeto
-filename =  os.environ.get("file")
+
+def main():
+    supervisor = Supervisor()
+    rclpy.init()
+
+    filename = os.environ.get("file")
+    if not filename:
+        raise RuntimeError("Variável de ambiente 'file' não definida.")
+
+    json_path = os.path.join(
+        os.path.dirname(__file__),
+        '../../path/',
+        filename
+    )
+
+    with open(json_path) as f:
+        drones = json.load(f)
+    uuids = [d['uuid'] for d in drones]
+
+    node = SupervisorNode(supervisor, uuids)
+
+    while supervisor.step(node.timestep) != -1 and rclpy.ok():
+        node.step_and_publish()
+        rclpy.spin_once(node, timeout_sec=0)
+
+    node.destroy_node()
+    rclpy.shutdown()
 
 
-print(os.getcwd())
-print(os.listdir('../../path'))
-json_path = os.path.join(os.path.dirname(__file__), '../../path/',filename)
-print(json_path)
-with open(json_path) as f:
-    drones = json.load(f)
-uuids = [d['uuid'] for d in drones]
-
-node = SupervisorNode(supervisor, uuids)
-
-while supervisor.step(node.timestep) != -1:
-    node.step_and_publish()
-    rclpy.spin_once(node, timeout_sec=0)
-
+if __name__ == '__main__':
+    main()
