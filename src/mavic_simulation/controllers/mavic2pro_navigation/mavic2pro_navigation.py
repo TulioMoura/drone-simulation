@@ -150,7 +150,7 @@ class Mavic (Robot):
         #print(self.custom_data)
         custom_data = self.custom_data.split('|')
         self.target_altitude = float(custom_data[1])
-        arr = json.loads(custom_data[0], parse_float=(str))
+        arr = json.loads(custom_data[0], parse_float=float)
         print(type(arr))
         waypoints = arr # [[-30, 20], [-60, 20], [-60, 10], [-30, 5]]
         # target altitude of the robot in meters
