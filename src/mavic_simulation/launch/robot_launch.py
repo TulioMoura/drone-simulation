@@ -45,8 +45,8 @@ def generate_wbt_file(drones):
             drone_content += f"  translation {drone['path'][0][0]} {drone['path'][0][1]} 0.3\n"  # Adjust translation based on 'i'
             drone_content += "  rotation 0 0 1 3.141590777218456\n"
             drone_content += f"  name \"{drone['uuid']}\"\n"
-            drone_content += "  controller \"mavic2pro_navigation\" \n"
-            #drone_content += "  controller <extern> \n"
+            #drone_content += "  controller \"mavic2pro_navigation\" \n"
+            drone_content += "  controller \"<extern>\" \n"
             drone_content += f"  customData \"{drone['path']}|{drone['altitude']}\"\n"
             drone_content += "  supervisor TRUE\n"
             drone_content += "  cameraSlot [\n"
