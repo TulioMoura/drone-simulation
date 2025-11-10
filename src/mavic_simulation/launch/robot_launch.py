@@ -85,13 +85,18 @@ def generate_wbt_file(drones):
         print("Models Written to world file")
         
         # Verifica se já existe um arquivo updated_world.wbt (se existir dá erro). Se sim, apaga ele.
-        dest = 'install/mavic_simulation/share/mavic_simulation/worlds/updated_world.wbt'
-        if os.path.exists(dest):
-            os.remove(dest)
+        if os.path.exists('install/mavic_simulation/share/mavic_simulation/worlds/updated_world.wbt'):
+            os.remove('install/mavic_simulation/share/mavic_simulation/worlds/updated_world.wbt')
 
-        with open(dest, 'w') as f:
-            f.write(wbt_content)
+        # Destino do novo arquivo de mundo que será usado pela simulação
+        destination_dir = 'install/mavic_simulation/share/mavic_simulation/worlds/'
+        
+        # Save the updated WBT content to a new file
+        with open('updated_world.wbt', 'w') as output_file:
+            output_file.write(wbt_content)
 
+        # Move novo arquivo de mundo para a pasta onde ele será lido posteriormente
+        shutil.move('updated_world.wbt', destination_dir)
 
 
 
