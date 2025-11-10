@@ -121,7 +121,7 @@ def generate_launch_description():
     generate_wbt_file(drones)
 
     world_path = os.path.join(package_dir, 'worlds', 'updated_world.wbt')
-    webots = WebotsLauncher(world=world_path)
+    webots = WebotsLauncher(world=world_path, ros2_supervisor=True)
 
     ld = LaunchDescription([
         SetEnvironmentVariable(name='file', value=path_filename),
