@@ -23,6 +23,7 @@ WorldInfo {
   title "DJI Mavic 2 PRO covering an area"
   basicTimeStep 32
   FPS 32
+  optimalThreadCount 12
   defaultDamping Damping {
     linear 0.5
     angular 0.5

@@ -31,6 +31,7 @@ import os
 import json
 import sys
 from launch_ros.actions import Node
+from datetime import datetime
 
 
 def generate_wbt_file(drones):
@@ -113,6 +114,7 @@ def read_path_file(directory):
     return drones
 
 def generate_launch_description():
+    print(datetime.now().time())
 
     # Método para adicionar a quantidade especificada de drones ao arquivo .wbt do mundo que será simulado
     #path variable is an array of arrays, for each entry, you have an sequence of arrays
@@ -145,8 +147,8 @@ def generate_launch_description():
     #mavic_drivers = {}
     #for i in drones:
     #   driver_name = f"mavic_driver_{i['uuid']}"
-    #    drone_name = f"Mavic_2_PRO_{i['uuid']}" 
-    #    mavic_drivers[driver_name] = WebotsController(
+    #   drone_name = f"Mavic_2_PRO_{i['uuid']}"
+    #   mavic_drivers[driver_name] = WebotsController(
     #        robot_name=drone_name,
     #        parameters=[
     #            {'robot_description': robot_description_path},
@@ -181,6 +183,6 @@ def generate_launch_description():
     #Adiciona os drivers ao launch da simulação
     #for mavic in mavic_drivers:
     #    ld.add_action(mavic_drivers[mavic])
-        
+
 
     return ld

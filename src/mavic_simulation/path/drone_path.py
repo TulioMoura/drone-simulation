@@ -10,7 +10,7 @@ class DronePathApp:
         #Parâmetros iniciais da janela
         self.root = root
         self.root.title("Editor de Caminho")
-        self.root.geometry("800x800")
+        self.root.geometry("800x720")
         self.root.resizable(False,False)
         self.drones = []
         self.drone_selecionado = None

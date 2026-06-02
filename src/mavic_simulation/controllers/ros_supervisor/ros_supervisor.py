@@ -45,10 +45,10 @@ rclpy.init()
 filename =  os.environ.get("file")
 
 
-print(os.getcwd())
-print(os.listdir('../../path'))
+#print(os.getcwd())
+#print(os.listdir('../../path'))
 json_path = os.path.join(os.path.dirname(__file__), '../../path/',filename)
-print(json_path)
+#print(json_path)
 with open(json_path) as f:
     drones = json.load(f)
 uuids = [d['uuid'] for d in drones]

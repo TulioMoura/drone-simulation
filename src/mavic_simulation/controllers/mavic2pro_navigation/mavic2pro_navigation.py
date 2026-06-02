@@ -18,6 +18,7 @@
    The drone reaches a given altitude and patrols from waypoint to waypoint."""
 
 from controller import Robot
+from datetime import datetime
 import sys
 import json
 try:
@@ -40,11 +41,12 @@ class Mavic (Robot):
     K_PITCH_P = 30.0          # P constant of the pitch PID.
 
     MAX_YAW_DISTURBANCE = 0.4
-    MAX_PITCH_DISTURBANCE = -1
+    MAX_PITCH_DISTURBANCE = -2
     # Precision between the target position and the robot position in meters
     target_precision = 0.5
 
     def __init__(self):
+        print("Simulation Started: ",datetime.now().time())
         Robot.__init__(self)
 
         self.time_step = int(self.getBasicTimeStep())
@@ -76,6 +78,7 @@ class Mavic (Robot):
         self.target_index = 0
         self.target_altitude = 0
         self.route_concluded = False
+        self.simulation_ended = False
 
     def set_position(self, pos):
         """
@@ -100,7 +103,7 @@ class Mavic (Robot):
         if self.target_position[0:2] == [0, 0]:  # Initialization
             self.target_position[0:2] = waypoints[0]
             if verbose_target:
-                print("First target: ", self.target_position[0:2])
+                print("First target: ", self.target_position[0:2], datetime.now().time())
 
         # if the robot is at the position with a precision of target_precision
         if all([abs(x1 - x2) < self.target_precision for (x1, x2) in zip(self.target_position, self.current_pose[0:2])]):
@@ -108,13 +111,13 @@ class Mavic (Robot):
             
             if self.target_index == len(waypoints) - 1:
                 self.route_concluded = True
+                print(self.name,"Route concluded!",datetime.now().time())
                 self.target_altitude = 0
             else:
                 self.target_index += 1
                 self.target_position[0:2] = waypoints[self.target_index]
             if verbose_target:
-                print(self.name," reaches one target! New target: ",
-                      self.target_position[0:2])
+                print(self.name," Alcançou o waypoint!",f"X:{self.current_pose[0]:.2f}", f"Y: {self.current_pose[1]:.2f}"," Proximo waypoint: ", self.target_position[0:2])
 
         # This will be in ]-pi;pi]
         self.target_position[2] = np.arctan2(
@@ -151,12 +154,12 @@ class Mavic (Robot):
         custom_data = self.custom_data.split('|')
         self.target_altitude = float(custom_data[1])
         arr = json.loads(custom_data[0], parse_float=float)
-        print(type(arr))
+        #print(type(arr))
         waypoints = arr # [[-30, 20], [-60, 20], [-60, 10], [-30, 5]]
         # target altitude of the robot in meters
         
 
-        while self.step(self.time_step) != -1:
+        while self.step(self.time_step) != -1 :
 
             # Read sensors
             roll, pitch, yaw = self.imu.getRollPitchYaw()
@@ -170,6 +173,10 @@ class Mavic (Robot):
                     yaw_disturbance, pitch_disturbance = self.move_to_target(waypoints)
                     t1 = self.getTime()
 
+            if ((altitude > self.target_altitude -0.5 or altitude > self.target_altitude + 0.5)  and self.route_concluded):
+                if not self.simulation_ended:
+                    print("Simulation Ended: ",datetime.now().time())
+                    self.simulation_ended = True
 
             roll_input = self.K_ROLL_P * clamp(roll, -1, 1) + roll_acceleration + roll_disturbance
             pitch_input = self.K_PITCH_P * clamp(pitch, -1, 1) + pitch_acceleration + pitch_disturbance
