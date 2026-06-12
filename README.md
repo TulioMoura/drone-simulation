@@ -1,5 +1,5 @@
 # Drone Simulation Project
-A simulation environment for multiple drones using the simulator _Webots_ and the framework _ROS2 (Robot Operating System)_ for implementing control logics.
+A simulation environment for multiple drones using the simulator _Webots_ and the framework _ROS2 (Robot Operating System).
 
 ## Table of Contents
 - [Installation](#installation)
@@ -7,22 +7,40 @@ A simulation environment for multiple drones using the simulator _Webots_ and th
 - [Architecture](#architecture)
 
 <h2 id="installation">Installation</h2>
-This project requires the instalation of ROS2 to work. The recommended version is ROS2 Humble, which can be installed by 
-following the instructions on ROS2 Humble official website:
+This guide was made targeting Ubuntu, version 24.04
+This project requires the instalation of ROS2, Webots-ros-driver, colcon and Webots to work.
+The recommended version is ROS2 Kilted, which can be installed by following the instructions on ROS2 Kilted official website:
 
-[ROS2 Humble Installation Guide](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debians.html)
+Step 1: Install ROS2: 
+[ROS2 Humble Installation Guide](https://docs.ros.org/en/kilted/Installation/Ubuntu-Install-Debs.html)
 
+Step 2: Install Webots-ros-driver: 
+[Webots-Ros-Driver Installation Guide](https://docs.ros.org/en/kilted/Tutorials/Advanced/Simulators/Webots/Installation-Ubuntu.html)
+
+Step 3: Install colcon
+```bash
+sudo apt update && sudo apt install colcon
+```
+
+Step 4: Install Webots:
+```bash
+https://github.com/cyberbotics/webots/releases/download/R2025a/webots_2025a_amd64.deb &&
+sudo apt install ./webots_2025a_amd64.deb
+```
+
+Step 5: Clone This repository.
 <h2 id="usage">Usage</h2>
 
 ### Activate environment
-In order to run the simulation, first you need to activate ROS2 on your machine by running the following command
+In order to run the simulation, first you need to activate ROS2 on your machine by running the following command inside the project folder
 
 ```bash
-source /opt/ros/humble/setup.bash
+source /opt/ros/kilted/setup.bash
 ```
 
 Then, make sure you're inside the project workspace and run
 ```bash
+cd drone-simulation/src/mavic_simulation
 source install/local_setup.bash
 ```
 
@@ -34,13 +52,13 @@ colcon build
 
 Then, in order to run the simulation, run the following command
 ```bash
-ros2 launch mavic_simulation robot_launch.py
+ros2 launch mavic_simulation robot_launch.py file:=path5.json
 ```
-This will execute the launcher of the project, install Webots if you don't have it already installed, ask how many drones are desired in the simulation and, finally, open the Webots window of the simulaton.
+This will execute the launcher of the project, install Webots if you don't have it already installed, and open the Webots window of the simulaton.
 
-### Control drones
-Once the simulation has been launched successfully, run the following command to run the controller for a drone, changing the **ID** in **teleop_twist_keyboard_Mavic_ID** and **cmd_vel_Mavic_ID** to the index of the drone you want to control.
-```bash
-ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args -r __node:=teleop_twist_keyboard_Mavic_ID -r cmd_vel:=cmd_vel_Mavic_ID
-```
-Drones are counted from left to right, which means the leftmost drone is the drone with ID 1 and the rightmost drone is the drone with ID n, being n the amount of drones in the simulation.
+The "file" parameter on the end of the command, defines the initialization file used on the simulation, the file needs to be located inside the /path directory, and, after any changes on this directory, the project needs to be recompiled using "colcon build" to ensure that the project will load the correct initialization file. 
+
+This repository contais sample files under the /path directory, that can be used to help with the creation of custom initialization files.
+
+
+
